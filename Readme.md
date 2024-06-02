@@ -1,16 +1,9 @@
-# Dup-Hunter
+# CorrEvator
 
-## Dup-Hunter: Detecting Duplicate Contributions in Fork-Based Development
+## CorrEvator: Evaluating Patch Correctness in Automated Program Repair
 
-Python library dependencies:
-+ tensorflow -v : 1.13.1
-+ numpy -v : 1.18.5
-+ nltk -v : 3.4.5
-+ flask -v : 1.1.1
-+ GitHub-Flask -v : 3.2.0
-+ gensim -v : 3.8.3
-+ scipy -v : 1.4.1 
-+ others: sklearn, bs4,
+Python library dependencies are listed in requirements.txt
+you can choose to run `python run.py -b True -i 14 -w 9` to quickly install the dependencies.
 
 ---
 

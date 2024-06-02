@@ -59,6 +59,17 @@ The data were then pre-processed and divided into 10 groups, resulting in 10-gro
 
 ---
 
+The overall process is roughly as follows: 
+
+1. Set various parameters for constructing the feature graph in 'getGraph_train_data.py' according to the requirements.
+2. Use `python getGraph_train_data.py N` to build graphs for ten sets of data.
+3. Use `python gmn/train.py filename` to train the model.
+4. Use `gmn/getResult.py` to directly obtain results, or use `getresult.bat` or `run_script.sh` to find the best checkpoint model.
+5. Modify the code in lines 389-399 of 'getResult.py' to test the best model on each set of data.
+6. Finally, use 'evaluation.py' to obtain the overall results.
+
+---
+
 nlp.py: Natural Language Processing model for calculating the text similarity.
 ```
 m = Model(texts)

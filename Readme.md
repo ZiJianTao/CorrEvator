@@ -3,54 +3,31 @@
 ## CorrEvator: Evaluating Patch Correctness in Automated Program Repair
 
 Python library dependencies are listed in requirements.txt
-you can choose to run `python run.py -b True -i 14 -w 9` to quickly install the dependencies.
+you can choose to run `pip install -r requirements.txt` to quickly install the dependencies.
 
 ---
-
 Dataset:
 
-[dupPR]: Reference paper: Yu, Yue, et al. "A dataset of duplicate pull-requests in github." 
-Proceedings of the 15th International Conference on Mining Software Repositories. ACM, 2018. (link: http://yuyue.github.io/res/paper/DupPR-msr2017.pdf)
-<including: 2323 Duplicate PR pairs in 26 repos>
+Source data comes from [Quatrain]: Reference paper: Tian, et al. "Is this Change the Answer to that Problem?: Correlating Descriptions of Bug and Code Changes for Evaluating Patch Correctness" 
+Proceedings of the 37th IEEE/ACM International Conference on Automated Software Engineering (link:[https://api.semanticscholar.org/CorpusID:251403079])
+<including: 7544 incorrect BugReport-Patch pairs and 1591 correct BugReport-Patch pairs>
+
+The data were then pre-processed and divided into 10 groups, resulting in 10-group cross-validation.
+
 
 ---
-#### **If you want to use our model quickly, three steps need to be done.**
 
-First, run `python run.py -b True -i 14 -w 9` to get all data graph (training data graphs and testing data graphs);
+#### **IN order to evaluate, the following 5 steps are required**
 
-Second, run `python run.py -t True -f remove_9` to train the model;
-
-Third, run `python run.py -r True -f remove_9 -m 0 -i 14` to get the result.
-
-```
-# -i/--repoid means how many testing data sets will be processed.
-parser.add_argument('-i', '--repoid',     default=14)
-# -w/--windowsize means the window size of sliding window.
-parser.add_argument('-w', '--windowsize', default=9)
-# -f/--filename means the filename of training or testing graph file.
-parser.add_argument('-f', '--filename',   default="")
-# -m/--modelname means which model used for testing.
-parser.add_argument('-m', '--modelname',  default="")
-```
----
-#### **More clearly, the following 5 steps are required**
-+ getData.py
-  
-    `python getData.py`
-    
-    It will generate `xxx_pull_info_X.txt` and `xxx_pull_info_y.txt` files which include all data needed to build graph. 
-    
-    Note: Modify the `access_token` in line 23 of the git.py.
-    
 + getGraph_train_data.py.py
     
     `python getGraph_train_data.py N`
     
-    It will take `xxx_pull_info_X.txt` and `xxx_pull_info_y.txt` files from `data/train-dataset/` directory to build the training data graph. 
+    It will take `xxx_pull_info_X.txt` and `xxx_pull_info_y.txt` files from `DATA/GROUPi/train-dataset` directory to build the training data graph. 
     The N1 indicates the sliding window size used to build the graph, 
     then two graph files will be generated in the same directory, as follows:
    
-    `remove_XXX_N.train_graphs`, `remove_XXX_N.train_val_graphs`
+    `remove_XXX_N.train_graphs`, `remove_XXX_N.val_graphs`
     
     >Note: XXX can be ` `, `title`, `body`. Where N represents the sliding window size.
 
@@ -75,47 +52,29 @@ parser.add_argument('-m', '--modelname',  default="")
     
     It will take `filename.test_graphs` in each repository directory to test the model in the `modelname` directory. 
     Repoid indicates how many testing data sets will be processed.
+
++ getresult.bat or run_script.sh
+
+     `./run_script.sh` in Linux or `./run_script.sh` in Windows to get the results of all the checkpoints to select a better model.
+
++ gmn/getResult.py
+
+     `python gmn/getResult.py filename modelname repoid`
     
 ---
 
 nlp.py: Natural Language Processing model for calculating the text similarity.
-
-
 ```
 m = Model(texts)
 text_sim = query_sim_tfidf(tokens1, tokens2)
 ``` 
 
-
 comp.py: Calculate the similarity for feature extraction.
-
 ``` 
 # Set up the params of compare (different metrics).
 # Check for init NLP model.
 feature_vector = get_pr_sim_vector(pull1, pull2)
 ```
 
-
-git.py: About GitHub API setting and fetching.
-
-``` python
-get_repo_info('repositories',
-              'fork' / 'pull' / 'issue' / 'commit' / 'branch',
-              renew_flag)
-
-get_pull(repo, num, renew)
-get_pull_commit(pull, renew)
-fetch_file_list(pull, renew)
-get_another_pull(pull, renew)
-check_too_big(pull)
-```
-
-
-fetch_raw_diff.py: Get data from API, parse the raw diff.
-
-```
-parse_diff(file_name, diff) # parse raw diff
-fetch_raw_diff(url) # parse raw diff from GitHub API
-```
 
 
